@@ -9,7 +9,7 @@ var utils = require('cordova/utils'),
   Cluster = require('./Cluster'),
   spherical = require('./spherical'),
   Overlay = require('./Overlay'),
-  BaseArrayClass = require('./BaseArrayClass');
+  BaseArrayClass = require('./BaseArrayClass'),lastZoom;
 
 /*****************************************************************************
  * MarkerCluster Class
@@ -262,6 +262,13 @@ MarkerCluster.prototype.onClusterClicked = function (cluster) {
   }
   var zoomLevel = computeZoom(cluster.getBounds(), self.map.getDiv());
   zoomLevel += zoomLevel === self.map.get('camera_zoom') ? 1 : 0;
+  if (cluster._markerCnt===1 && zoomLevel>17) {
+    zoomLevel=14;
+  }
+  if(lastZoom===zoomLevel)
+    zoomLevel+=2;
+
+  lastZoom=zoomLevel;
   self.map.animateCamera({
     target: cluster.getBounds().getCenter(),
     zoom: zoomLevel,
